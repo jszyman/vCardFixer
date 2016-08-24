@@ -1,37 +1,36 @@
 #https://github.com/eventable/vobject
 import vobject
 
-def open_file(self, file_name, path = './', mode = 'r'):
-    try:
-        opened_file = open(path + '\\' + file_name, mode)
-        return opened_file
-    except IOError:
-        return None
+from os import listdir
+from os.path import isfile, join
 
-vcard_file = open(".\in\Jon Doe.vcf")
-vcard_text = vcard_file.read(-1)
-vcard_file.close()
 
-j = vobject.readOne(vcard_text)
-j.prettyPrint()
+input_dir = "./in"
+output_dir = "./out"
 
-print
-print "Family name: " + j.n.value.family
-print "Given name: " + j.n.value.given
+#list all files in IN directory
+onlyfiles = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
 
-#exchange given and family names for fixing sake
-j.n.value.family, j.n.value.given = j.n.value.given, j.n.value.family
+print 
+print "Processing name exchange..."
 
-j.prettyPrint()
+for fi in onlyfiles: 
+    print "..." + str(fi)
+    vcard_f = open(input_dir + "/" + fi)
+    vcard_t = vcard_f.read(-1)
+    vcard_f.close()
+    vcard_o = vobject.readOne(vcard_t)
+    
+    #exchange given and family names
+    vcard_o.n.value.family, vcard_o.n.value.given = vcard_o.n.value.given, vcard_o.n.value.family
+    #serialize() requires at least 1 FN field 
+    vcard_o.add('fn')
+    
+    file_out =  open(output_dir + "/" + fi, "w")
+    file_out.write(vcard_o.serialize())
+    file_out.close()
 
-#serialize() requires at least 1 FN field 
-j.add('fn')
-#print j.serialize()
 
-#store reworked file
-file_out =  open(".\out\Jon Doe.vcf", "w")
-file_out.write(j.serialize())
-file_out.close()
 
 if __name__ == '__main__':
     pass
