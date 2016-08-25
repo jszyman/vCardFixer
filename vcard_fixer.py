@@ -1,15 +1,24 @@
 #https://github.com/eventable/vobject
 import vobject
-
-from os import listdir
-from os.path import isfile, join
-
+import os
+import errno
 
 input_dir = "./in"
 output_dir = "./out"
 
 #list all files in IN directory
-onlyfiles = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
+onlyfiles = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+
+if not os.path.exists(output_dir):
+    try:
+        print
+        print "Creating output directory..."
+        os.makedirs(output_dir)
+        print "...out"
+    except OSError as exc: # Guard against race condition
+        print "Output directory exists already!"
+        if exc.errno != errno.EEXIST:
+            raise
 
 print 
 print "Processing name exchange..."
