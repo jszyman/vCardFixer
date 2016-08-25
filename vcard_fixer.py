@@ -35,7 +35,8 @@ for fi in onlyfiles:
     #serialize() requires at least 1 FN field 
     vcard_o.add('fn')
     
-    file_out =  open(output_dir + "/" + fi, "w")
+    new_name = vcard_o.n.value.family + " " + vcard_o.n.value.given + ".vcf"
+    file_out =  open(output_dir + "/" + new_name, "w")
     file_out.write(vcard_o.serialize())
     file_out.close()
 
@@ -45,3 +46,4 @@ if __name__ == '__main__':
     pass
 
 #TODO: remove empty lines from out-files
+#TODO: consider removing X-CLASS entry from vCard
